@@ -3,29 +3,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-aws-lambda-runtime-samples",
+    name: "swift-aws-lambda-webfinger",
     platforms: [
-        .macOS(.v12),
+        .macOS(.v13),
     ],
     products: [
-        // introductory example
-        .executable(name: "HelloWorld", targets: ["HelloWorld"]),
-        // good for benchmarking
-        .executable(name: "Benchmark", targets: ["Benchmark"]),
-        // demonstrate different types of error handling
+        .executable(name: "webfinger", targets: ["WebFinger"]),
     ],
     dependencies: [
-        // this is the dependency on the swift-aws-lambda-runtime library
-        // in real-world projects this would say
-        // .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", from: "1.0.0")
-        .package(name: "swift-aws-lambda-runtime", path: "../.."),
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", from: "1.0.0-alpha")
     ],
     targets: [
-        .executableTarget(name: "Benchmark", dependencies: [
-            .product(name: "AWSLambdaRuntimeCore", package: "swift-aws-lambda-runtime"),
-        ]),
-        .executableTarget(name: "HelloWorld", dependencies: [
-            .product(name: "AWSLambdaRuntime", package: "swift-aws-lambda-runtime"),
-        ]),
+        .executableTarget(
+            name: "WebFinger",
+            dependencies: [
+                .product(name: "AWSLambdaRuntime", package: "swift-aws-lambda-runtime"),
+            ]
+        ),
     ]
 )
