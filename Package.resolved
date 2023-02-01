@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "swift-aws-lambda-events",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/swift-aws-lambda-events",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a374581e7a2bd1fb3a2bb3ee22be78e397513ce7"
+      }
+    },
+    {
       "identity" : "swift-aws-lambda-runtime",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-server/swift-aws-lambda-runtime.git",
