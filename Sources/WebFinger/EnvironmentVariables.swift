@@ -1,4 +1,4 @@
-// Copyright © 2022 Alex Kovács. All rights reserved.
+// Copyright © 2023 Alex Kovács. All rights reserved.
 
 import AWSLambdaRuntime
 
