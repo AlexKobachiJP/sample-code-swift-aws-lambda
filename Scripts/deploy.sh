@@ -2,29 +2,29 @@
 
 set -eu
 
-DIR="$(cd "$(dirname "$0")" && pwd)"
-source $DIR/config.sh
+source ./Scripts/configuration.sh
 
-workspace="$DIR/../.."
+DIRECTORY="$(cd "$(dirname "$0")" && pwd)"
+WORKSPACE="$DIRECTORY/.."
 
-echo -e "\ndeploying $executable"
+echo "👇 Deploying '$EXECUTABLE' from package at '$WORKSPACE'"
+echo "👇 Preparing docker build image..."
+docker build . -t builder
 
-$DIR/build-and-package.sh "$executable"
+echo "👇 Building '$EXECUTABLE' lambda..."
+docker run --rm -v "$WORKSPACE":/workspace -w /workspace builder \
+    bash -cl "swift build --product '$EXECUTABLE' -c release"
 
-echo "-------------------------------------------------------------------------"
-echo "uploading \"$executable\" lambda to AWS S3"
-echo "-------------------------------------------------------------------------"
+echo "👇 Packaging '$EXECUTABLE' lambda..."
+docker run --rm -v "$WORKSPACE":/workspace -w /workspace builder \
+    bash -cl "./Scripts/package.sh '$EXECUTABLE' $AWS_S3_FILE"
 
-read -p "S3 bucket name to upload zip file (must exist in AWS S3): " s3_bucket
-s3_bucket=${s3_bucket:-swift-lambda-test} # default for easy testing
+echo "👇 Uploading '$EXECUTABLE' lambda to AWS S3..."
+aws s3 cp ".build/lambda/$EXECUTABLE/$AWS_S3_FILE" "s3://$AWS_S3_BUCKET/$AWS_S3_FOLDER/" \
+    --profile $AWS_PROFILE
 
-aws s3 cp ".build/lambda/$executable/lambda.zip" "s3://$s3_bucket/"
-
-echo "-------------------------------------------------------------------------"
-echo "updating AWS Lambda to use \"$executable\""
-echo "-------------------------------------------------------------------------"
-
-read -p "Lambda Function name (must exist in AWS Lambda): " lambda_name
-lambda_name=${lambda_name:-SwiftSample} # default for easy testing
-
-aws lambda update-function-code --function "$lambda_name" --s3-bucket "$s3_bucket" --s3-key lambda.zip
+echo "👇 Updating AWS Lambda to use '$EXECUTABLE'..."
+aws lambda update-function-code --function "$AWS_LAMBDA_FUNCTION" \
+    --s3-bucket "$AWS_S3_BUCKET" \
+    --s3-key "$AWS_S3_FOLDER/$AWS_S3_FILE" \
+    --profile $AWS_PROFILE
