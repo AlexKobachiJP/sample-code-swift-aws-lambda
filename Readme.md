@@ -1,3 +1,9 @@
+<span align="center">
+
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./License.md)
+
+</span>
+
 # Sample Code: Swift AWS Lambda
 
 This is a sample AWS lambda function using the Swift runtime.
