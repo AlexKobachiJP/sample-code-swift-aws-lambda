@@ -2,6 +2,7 @@
 
 import AWSLambdaRuntime
 import AWSLambdaEvents
+import Foundation
 
 @main
 struct WebFingerHandler: SimpleLambdaHandler {
@@ -17,11 +18,12 @@ struct WebFingerHandler: SimpleLambdaHandler {
     /// - Returns: An `APIGatewayV2Response` with the response body expected by WebFinger.
     func handle(_ event: APIGatewayV2Request, context: LambdaContext) async throws -> APIGatewayV2Response {
         logEventIfNecessary(event, context: context)
-        
-        let resourceKey = "resource"
+
         let accountPrefix = "acct:"
-        guard let resource = event.queryStringParameters?[resourceKey],
-                resource.hasPrefix(accountPrefix) else {
+        guard
+            let resource = event.queryStringParameters?["resource"],
+            resource.hasPrefix(accountPrefix)
+        else {
             return APIGatewayV2Response(statusCode: .badRequest)
         }
 
@@ -36,28 +38,30 @@ struct WebFingerHandler: SimpleLambdaHandler {
     }
 }
 
-#if DEBUG
-import Foundation
-#endif
-
 extension WebFingerHandler {
     func logEventIfNecessary(_ event: APIGatewayV2Request, context: LambdaContext) {
         guard Environment.isDebugLogEnabled else { return }
 
 #if DEBUG
         // Pretty print the output for local debugging.
-        if EnvironmentVariables.isLocalLambdaServerEnabled {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
-            if let data = try? encoder.encode(event),
-                let json = String(data: data, encoding: .utf8) {
-                context.logger.info("\(json)")
-            }
-
+        if Environment.isLocalLambdaServerEnabled,
+           let json = event.prettyJson {
+            context.logger.info("\(json)")
             return
         }
 #endif
 
         context.logger.info("\(event)")
+    }
+}
+
+extension APIGatewayV2Request {
+    var prettyJson: String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
+        if let data = try? encoder.encode(self) {
+            return String(data: data, encoding: .utf8)
+        }
+        return nil
     }
 }
