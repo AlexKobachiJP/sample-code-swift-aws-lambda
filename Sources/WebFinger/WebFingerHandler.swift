@@ -42,7 +42,7 @@ import Foundation
 
 extension WebFingerHandler {
     func logEventIfNecessary(_ event: APIGatewayV2Request, context: LambdaContext) {
-        guard EnvironmentVariables.isDebugLogEnabled else { return }
+        guard Environment.isDebugLogEnabled else { return }
 
 #if DEBUG
         // Pretty print the output for local debugging.
