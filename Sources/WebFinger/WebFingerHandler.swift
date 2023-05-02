@@ -1,7 +1,7 @@
 // Copyright © 2023 Alex Kovács. All rights reserved.
 
-import AWSLambdaRuntime
 import AWSLambdaEvents
+import AWSLambdaRuntime
 import Foundation
 
 @main
@@ -10,7 +10,7 @@ struct WebFingerHandler: SimpleLambdaHandler {
     /// Handle request with query string: `"resource=acct:<account>"`.
     ///
     /// This handler assumes it will be called from a service that translates HTTP requests into events of type`APIGatewayV2Request`
-    /// and expects response objects of type `APIGatewayV2Response`.  This is true for AWS API Gateway, CloudFront or when calling the
+    /// and expects response objects of type `APIGatewayV2Response`. This is true for AWS API Gateway, CloudFront or when calling the
     /// Lambda function via its function URL.
     /// - Parameters:
     ///   - event: An `APIGatewayV2Request` with appropriate `queryStringParameters`.
@@ -29,7 +29,7 @@ struct WebFingerHandler: SimpleLambdaHandler {
 
         let account = String(resource.dropFirst(accountPrefix.count))
 
-        guard let body = Account.lookup[account] else {
+        guard let body = Accounts.lookup[account] else {
             return APIGatewayV2Response(statusCode: .notFound)
         }
 
@@ -40,7 +40,9 @@ struct WebFingerHandler: SimpleLambdaHandler {
 
 extension WebFingerHandler {
     func logEventIfNecessary(_ event: APIGatewayV2Request, context: LambdaContext) {
-        guard Environment.isDebugLogEnabled else { return }
+        guard Environment.isDebugLogEnabled else {
+            return
+        }
 
 #if DEBUG
         // Pretty print the output for local debugging.

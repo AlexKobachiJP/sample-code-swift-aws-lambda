@@ -1,6 +1,6 @@
 // Copyright © 2023 Alex Kovács. All rights reserved.
 
-struct Account {
+enum Accounts {
     static let lookup = [
         "alice@wonderland.com": """
             {
@@ -27,6 +27,6 @@ struct Account {
                 ]
             }
             
-            """
+            """,
     ]
 }
