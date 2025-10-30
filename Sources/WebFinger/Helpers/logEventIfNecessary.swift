@@ -11,7 +11,7 @@ func logEventIfNecessary(_ event: APIGatewayV2Request, context: LambdaContext) {
   #if DEBUG
     // Pretty print the output for local debugging.
     if Environment.isLocalLambdaServerEnabled,
-      let json = event.prettyJson
+      let json = event.prettyJsonValue
     {
       context.logger.info("\(json)")
       return

@@ -3,8 +3,8 @@
 import AWSLambdaEvents
 import Foundation
 
-extension APIGatewayV2Request {
-  var prettyJson: String? {
+extension Encodable {
+  var prettyJsonValue: String? {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
     if let data = try? encoder.encode(self) {
